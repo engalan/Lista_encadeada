@@ -5,33 +5,65 @@ typedef struct Node
 {
     int val;
     struct  Node *next;
+    struct  Node *prev;
    
 }t_Node;
 
-void addNode(t_Node **head, int add_val)
-{
-/* ponteiro para ponteiro - necessário pois head não estava alterando o seu estado inicial (NULL) */
-    t_Node *aux  = *head; 
-    /* aux sempre ira apontar para o endereço do primeiro nó para que assim, a lista seja varrida 
-    do inicio até o final */
-    t_Node *newNode = (t_Node *)malloc(sizeof(t_Node));
+// void addNode(t_Node **head, int add_val) //adicona elementos no final da lista
+// {
+// /* ponteiro para ponteiro - necessário pois head não estava alterando o seu estado inicial (NULL) */
+//     t_Node *aux  = *head; 
+//     /* aux sempre ira apontar para o endereço do primeiro nó para que assim, a lista seja varrida 
+//     do inicio até o final */
+//     t_Node *newNode = (t_Node *)malloc(sizeof(t_Node));
    
-    newNode->val = add_val;
-    newNode->next = NULL;
+//     newNode->val = add_val;
+//     newNode->next = NULL;
 
-    if (*head == NULL){ // apos o prumeiro no ser adicionado na lista essa condição é falsa e não entra no if
-        // lista vazia
-        *head = newNode; /* *head é alterado apenas uma vez que é quando um no é adicionado */
+//     if (*head == NULL){ // apos o prumeiro no ser adicionado na lista essa condição é falsa e não entra no if
+//         // lista vazia
+//         *head = newNode; /* *head é alterado apenas uma vez que é quando um no é adicionado */
+//         return;
+//     }
+  
+    
+//     while (aux->next != NULL)
+//     {
+//         aux = aux->next; 
+//     }
+//     /* no fim do while aux aponta para o ultimo elemento */
+//     aux->next = newNode; // aqui é onde o ponteiro next do ultimo elemento aponta para o no recem adicionado
+// }
+
+void inputNode(t_Node **head, int input_val, int pos)
+{
+    t_Node *newNode = (t_Node*)malloc(sizeof(t_Node));
+    t_Node *aux_pos;
+    
+    newNode->val = input_val;
+    aux_pos = *head;
+    
+    if (*head == NULL){
+        *head = newNode; // head aponta para o 1 elemento da lista
+        aux_pos = *head;
+        newNode->prev = NULL;
+        newNode->next = NULL;
         return;
     }
-   // aux = *head;
-    
-    while (aux->next != NULL)
+
+    switch (pos)
     {
-        aux = aux->next; 
+    case 1:
+       // aux_pos;
+        *head = newNode;
+        newNode->prev = NULL;
+        newNode->next = aux_pos;
+        break;
+    
+    default:
+        printf("Invalid option! \n");
+        break;
     }
-    /* no fim do while aux aponta para o ultimo elemento */
-    aux->next = newNode; // aqui é onde o ponteiro next do ultimo elemento aponta para o no recem adicionado
 }
 
 void removeNode(t_Node **head)
@@ -83,7 +115,6 @@ void deleteAll(t_Node **head)
     // free(aux_pos);
     
 }
-
 void printList(t_Node *head)
 {
     t_Node *aux = head;
@@ -102,11 +133,13 @@ void printList(t_Node *head)
 
 int main (void){
 
-    int op,value;
+    int op,value,pos;
+    int count = 0;
 
-    t_Node *head = NULL; // first node
-    //head = (t_Node *)(malloc(sizeof(t_Node))); // endereço de memória onde foi reservado o espaço da struct
-
+    t_Node *head = NULL;
+    t_Node *prev = NULL;
+    
+    
     do
     {   
         printf("Where is head ? %p\n",head);
@@ -117,7 +150,12 @@ int main (void){
         case 1:
             printf("Enter a value\n");
             scanf("%d",&value);
-            addNode(&head,value);
+            if (head != NULL){
+                printf("Select a position\n");
+                scanf("%d",&pos);
+            }
+            //addNode(&head,value);
+            inputNode(&head, value, pos);
             break;
         case 2:
             removeNode(&head);
