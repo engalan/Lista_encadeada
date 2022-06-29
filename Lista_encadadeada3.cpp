@@ -24,7 +24,7 @@ typedef struct Node
 //         // lista vazia
 //         *head = newNode; /* *head é alterado apenas uma vez que é quando um no é adicionado */
 //         return;
-//     }
+//     } //
   
     
 //     while (aux->next != NULL)
