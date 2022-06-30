@@ -5,7 +5,7 @@ typedef struct Node
 {
     int val,size;
     struct  Node *next;
-    struct  Node *prev;
+    // struct  Node *prev;
   
 }t_Node;
 
@@ -23,8 +23,7 @@ void inputNodeEnd(t_Node **head, int input_val)
         aux->next  = newNodeEnd;
         
 }
-
-void inputNode(t_Node **head, int size_list, int input_val, int pos)
+int inputNode(t_Node **head, int size_list, int input_val, int pos)
 {
     t_Node *newNode = (t_Node*)malloc(sizeof(t_Node));
     t_Node *aux_pos; //armazena o endereço do ultimo head
@@ -36,7 +35,7 @@ void inputNode(t_Node **head, int size_list, int input_val, int pos)
 
     if(pos > size_list + 1){
     printf("Invalid position!\n");
-    return;
+    return 0;
     }
     // insere no inicio
     if (pos == 1){
@@ -44,7 +43,7 @@ void inputNode(t_Node **head, int size_list, int input_val, int pos)
         *head = newNode;
         // newNode->prev = NULL;
         newNode->next = aux_pos;
-        return;
+        return 1;
     }
     if (pos > 1 ){
         aux_prev = aux_pos;
@@ -55,36 +54,7 @@ void inputNode(t_Node **head, int size_list, int input_val, int pos)
         aux_prev->next = newNode;
         newNode->next = aux_pos;
     }
-    
-    // if (pos == size_list){
-
-    //     while (aux_pos->next != NULL){
-    //         aux_pos = aux_pos->next;
-    //     }
-    //     aux_pos->next = newNode;
-    //     newNode->next = NULL;
-    // }
-    //insere no meio
-    // if (pos > size_list){
-    // // percorre a lista e ve se a posição é valida      
-    // //    while (aux_pos != NULL){
-    // //        aux_pos = aux_pos->next;
-    // //        size ++;
-    // //    }
-    // //    printf("Tamanho da lista = %d\n",size);
-    // //    if (pos > size){
-    // //        printf("Invalid position\n");
-    // //        return;
-    // //     }
-    //     // if (pos == 2){
-
-    //     //     while (aux_pos->next != NULL){
-    //     //         aux_pos = aux_pos->next;
-    //     //     }
-    //     //     aux_pos->next = newNode;
-    //     //     newNode->next = NULL;
-    //     // }
-    // }
+    return 1;
 }
 void removeNode(t_Node **head)
 {
@@ -99,10 +69,38 @@ void removeNode(t_Node **head)
     //Avança fila em uma posição
     *head = aux->next;
     //Printa valor que saiu(opcional)
-    printf("Valor removido = %d\n",aux->val);
+    printf("Removed value = %d\n\n",aux->val);
     //Desaloca no que saiu
     free(aux);
     aux = *head;
+}
+int removeSelectedNode(t_Node **head, int size_list, int pos)
+{   
+    t_Node *aux = *head;
+    t_Node *aux_next; //remover essa variável e melhorar a lógica
+    t_Node *aux_prev;
+
+    if(pos > size_list){
+        printf("Invalid position\n");
+        return 0;
+    }
+    if (pos == 1){
+        aux = aux->next;
+        free(*head);
+        *head = aux;
+        return 1;
+ 
+    }else{
+        for (int i = 1; i < pos; i++){
+            aux_prev = aux;
+            aux = aux->next;
+        }
+        //aux_next = aux->next; //endereço posterior ao removido origianl
+        aux_prev->next = aux->next;
+        printf("Removed value -> %d\n\n",aux->val);
+        free (aux);
+        return 1;
+    }
 }
 void deleteAll(t_Node **head)
 {   
@@ -117,13 +115,13 @@ void deleteAll(t_Node **head)
    
     while (aux_pos->next != NULL){
         aux_pos = aux_pos->next;
-        printf("Valor a ser removido = %d\n",aux_remove->val);
+        // printf("Valor a ser removido = %d\n",aux_remove->val);
         free(aux_remove);
         aux_remove = aux_pos;
         if(aux_remove->next == NULL){
-            printf("Valor a ser removido = %d\n",aux_remove->val);
+            // printf("Valor a ser removido = %d\n",aux_remove->val);
             free(aux_remove);
-            printf("Lista vazia!\n");
+            printf("Empty!\n\n");
             *head = NULL;
             return;
         }
@@ -143,11 +141,13 @@ void printList(t_Node *head)
         printf("Empty!\n\n");
         return;
     }
+    printf("Values:\n");
     while (aux != NULL)
-    {
-        printf("Valores na lista = %d\n",aux->val);
+        {
+        printf("-> %d\n",aux->val);
         aux = aux->next;
     }
+    printf("\n");
 }
 
 int main (void){
@@ -160,8 +160,7 @@ int main (void){
       
     do
     {   
-        printf("Where is head ? %p\n",head);
-        printf("Select an option\n 1 - Add node\n 2 - Remove Node\n 3 - print\n 4 - Delete all\n 8 - Exit\n ");
+        printf("Select an option\n 1 - Add node\n 2 - Remove Node\n 3 - print\n 4 - Delete all\n 5 - Delete selection\n 8 - Exit\n ");
         scanf("%d",&op);
         system("clear");
 
@@ -169,16 +168,11 @@ int main (void){
         case 1:
             printf("Enter a value\n");
             scanf("%d",&value);
-
-            // if (head != NULL){
-            //     printf("Select a position\n");
-            //     scanf("%d",&pos);
-            // }
-            //addNode(&head,value);
             printf("Select a position\n");
             scanf("%d",&pos);
-            inputNode(&head,count,value, pos); //incrementar o tamnho da lista dentro da Main
-            count ++;
+            system("clear");
+            if(inputNode(&head,count,value, pos)) //incrementar o tamnho da lista dentro da Main
+                count ++;
             break;
         case 2:
             removeNode(&head);
@@ -188,7 +182,13 @@ int main (void){
             break;
         case 4:
             deleteAll(&head);
-            printf("head apontando para %p\n",head);
+            break;
+        case 5:
+            printf("Select a position\n");
+            scanf("%d",&pos);
+            system("clear");
+            if(removeSelectedNode(&head,count,pos))
+                count --;
             break;
          case 8:
             printf("saindo\n");
